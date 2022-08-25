@@ -1,0 +1,30 @@
+[project]
+name = "grake"
+version = "0.0.1"
+description = "tool for managing storage on the UM GReat lAKE cluster"
+authors = [
+    {name = "Andrew Robbins", email = "robbiand@med.umich.edu"},
+]
+dependencies = [
+    "pandas>=1.4.3",
+    "numpy>=1.23.2",
+    "ipython>=8.4.0",
+    "globus-sdk>=3.10.1",
+]
+requires-python = ">=3.10"
+readme = "README.md"
+license = {text = "MIT"}
+[project.optional-dependencies]
+
+[build-system]
+requires = ["pdm-pep517>=1.0.0"]
+build-backend = "pdm.pep517.api"
+
+[tool]
+[tool.pdm]
+[tool.pdm.dev-dependencies]
+dev = [
+    "mypy>=0.971",
+    "flake8>=5.0.4",
+    "pandas-stubs>=1.2.0.62",
+]
