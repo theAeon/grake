@@ -1,4 +1,3 @@
-from argparse import ArgumentParser, Namespace
 from collections.abc import Mapping
 from io import StringIO
 from os import putenv
@@ -87,9 +86,9 @@ def parse(dwalk: str):
     return groups
 
 
-def top(args: Namespace) -> None:
-    datatable: DataFrame = parse(args.file)
-    selected = datatable.get_group(args.user)
+def topcmd(threads: int, filename: str, user: str) -> None:
+    datatable: DataFrame = parse(filename)
+    selected = datatable.get_group(user)
     sorted = selected.sort_values('bytes', ascending=False)
     sorted['bytes'] = [str(int(num)) + un for num, un in
                        [unitreduce(x) for x in sorted['bytes'].to_list()]]
@@ -101,8 +100,8 @@ def top(args: Namespace) -> None:
             styler.to_html(output, doctype_html=True)  # type: ignore
 
 
-def graph(args: Namespace) -> None:
-    datatable: DataFrame = parse(args.file).sum()
+def graphcmd(threads: int, filename: str) -> None:
+    datatable: DataFrame = parse(filename).sum()
     putenv("MPLBACKEND", "Cairo")
     total: uint = floor(datatable['bytes'].sum())
     percentlist = datatable['bytes'] / total * 100  # type: ignore
@@ -116,19 +115,3 @@ def graph(args: Namespace) -> None:
                         legend=False, autopct='%.2f%%')
     ax.set_aspect('equal')
     ax.figure.savefig('./usage.png')
-
-
-prsr: ArgumentParser = ArgumentParser()
-prsr.add_argument("file", help="Text output of DWalk, sorted by user",
-                  type=str)
-prsr.add_argument('-j', default=1, type=int, required=False, metavar="threads")
-subparsers = prsr.add_subparsers()
-graphprsr: ArgumentParser = subparsers.add_parser("graph",
-                                                  help="compare usage by user")
-graphprsr.set_defaults(func=graph)
-tblprsr: ArgumentParser = subparsers.add_parser("top",
-                                                help="get largest directories for user")  # noqa: E501
-tblprsr.add_argument("user", help="a unix user")
-tblprsr.set_defaults(func=top)
-args: Namespace = prsr.parse_args()
-args.func(args)
