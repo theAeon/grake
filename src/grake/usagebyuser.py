@@ -13,10 +13,11 @@ from pandas import DataFrame, Index, Series, read_csv
 
 def is_ipython() -> bool:
     try:
-        get_ipython().__class__.__name__
+        get_ipython().__class__.__name__  # type: ignore
         return True
     except NameError:
         return False
+
 
 factorDict: Mapping[str, uint] = dict([('B', uint(1)),
                                        ('KB', uint(1024)),
@@ -97,7 +98,7 @@ def top(args: Namespace) -> None:
         display_html(styler)
     else:
         with open('table.html', 'w') as output:
-            styler.to_html(output, doctype_html=True)
+            styler.to_html(output, doctype_html=True)  # type: ignore
 
 
 def graph(args: Namespace) -> None:
